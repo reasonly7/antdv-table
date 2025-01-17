@@ -49,7 +49,7 @@ defineProps<{
       </div>
     </div>
 
-    <Table :columns="columns" :dataSource="dataSource" size="large">
+    <Table :columns="columns" :dataSource="dataSource" size="small">
       <template #bodyCell="item">
         <slot name="bodyCell" v-bind="item"></slot>
       </template>

@@ -38,12 +38,16 @@ onMounted(async () => {
     <div class="card-wrapper">
       <Card :bordered="false">
         <div style="width: 1200px">
-          <CustomeTable :columns="columns" :dataSource="dataSource" title="查询表格">
+          <CustomeTable
+            :columns="columns"
+            :dataSource="dataSource"
+            title="查询表格"
+          >
             <template #bodyCell="{ column }">
               <template v-if="column.dataIndex === 'action'">
-                <Flex :gap="8">
-                  <Button type="link" style="padding: 0">配置</Button>
-                  <Button type="link" style="padding: 0">订阅警报</Button>
+                <Flex :gap="16">
+                  <a href="javascript:void(0)">配置</a>
+                  <a href="javascript:void(0)">订阅警报</a>
                 </Flex>
               </template>
             </template>
