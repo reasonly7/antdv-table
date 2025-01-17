@@ -10,23 +10,34 @@ import {
 } from "ant-design-vue";
 import { SvgIcon } from "@/components/svg-icon";
 import { TableShrinkType, useTableShrink } from "./useTableShrink";
-import { usetableSelect } from "./useTableSelect";
+import type { RowKey } from ".";
+import { computed } from "vue";
+import type { TableRowSelection } from "ant-design-vue/es/table/interface";
 
-defineProps<{
+const props = defineProps<{
   columns: TableColumnsType;
   dataSource: TableProps["dataSource"];
   title: string;
   loading: boolean;
-  // selectedRowKeys: (string | number)[];
+  selectedRowKeys?: RowKey[];
+  pagination?: TableProps["pagination"];
 }>();
 
-defineEmits<{
+const emits = defineEmits<{
   create: [];
   refresh: [];
+  "update:selectedRowKeys": [keys: RowKey[]];
 }>();
 
 const tableShrink = useTableShrink();
-const tableSelect = usetableSelect();
+const rowSelection = computed(() => {
+  return !props.selectedRowKeys
+    ? undefined
+    : ({
+        selectedRowKeys: props.selectedRowKeys,
+        onChange: (keys: RowKey[]) => emits("update:selectedRowKeys", keys),
+      } satisfies TableRowSelection);
+});
 </script>
 
 <template>
@@ -86,10 +97,8 @@ const tableSelect = usetableSelect();
       :dataSource="dataSource"
       :size="tableShrink.activeKey"
       :loading="loading"
-      :rowSelection="{
-        selectedRowKeys: tableSelect.selectedKeys,
-        onChange: tableSelect.onSelect,
-      }"
+      :rowSelection="rowSelection"
+      :pagination="pagination"
     >
       <template #bodyCell="item">
         <slot name="bodyCell" v-bind="item"></slot>

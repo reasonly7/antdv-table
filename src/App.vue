@@ -8,7 +8,11 @@ import {
 import zhCN from "ant-design-vue/locale/zh_CN";
 import { locale } from "dayjs";
 import "dayjs/locale/zh-cn";
-import { CustomeTable } from "./components/custome-table";
+import {
+  CustomeTable,
+  usePagination,
+  type RowKey,
+} from "./components/custome-table";
 import { mockApi } from "./api/mock.api";
 import { onMounted, ref } from "vue";
 
@@ -22,14 +26,10 @@ const columns: TableColumnsType = [
   { title: "上次调度时间", dataIndex: "time", sorter: true },
   { title: "操作", dataIndex: "action" },
 ];
-const dataSource = ref<any[]>([]);
+const selectedRowKeys = ref<RowKey[]>([]);
+const { query, loading, pagination, records } = usePagination(mockApi.query);
 
-onMounted(async () => {
-  const data = await mockApi.query();
-  console.log(data);
-
-  dataSource.value = data.records;
-});
+onMounted(query);
 </script>
 
 <template>
@@ -38,10 +38,12 @@ onMounted(async () => {
       <Card :bordered="false">
         <div style="width: 1200px">
           <CustomeTable
-            :loading="false"
-            :columns="columns"
-            :dataSource="dataSource"
             title="查询表格"
+            :loading="loading"
+            :columns="columns"
+            :dataSource="records"
+            :pagination="pagination"
+            v-model:selectedRowKeys="selectedRowKeys"
           >
             <template #bodyCell="{ column }">
               <template v-if="column.dataIndex === 'action'">
