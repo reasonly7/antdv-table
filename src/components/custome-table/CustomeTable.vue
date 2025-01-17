@@ -1,17 +1,28 @@
 <script lang="ts" setup>
 import {
   Button,
+  Dropdown,
+  Menu,
   Table,
+  Tooltip,
   type TableColumnsType,
   type TableProps,
 } from "ant-design-vue";
 import { SvgIcon } from "@/components/svg-icon";
+import { TableShrinkType, useTableShrink } from "./useTableShrink";
 
 defineProps<{
   columns: TableColumnsType;
   dataSource: TableProps["dataSource"];
   title: string;
 }>();
+
+defineEmits<{
+  create: [];
+  refresh: [];
+}>();
+
+const tableShrink = useTableShrink();
 </script>
 
 <template>
@@ -29,27 +40,47 @@ defineProps<{
           新增
         </Button>
 
-        <Button type="text">
-          <template #icon>
-            <SvgIcon type="refresh"></SvgIcon>
-          </template>
-        </Button>
+        <Tooltip title="刷新">
+          <Button type="text">
+            <template #icon>
+              <SvgIcon type="refresh"></SvgIcon>
+            </template>
+          </Button>
+        </Tooltip>
 
-        <Button type="text">
-          <template #icon>
-            <SvgIcon type="shrink"></SvgIcon>
+        <Dropdown trigger="click">
+          <template #overlay>
+            <Menu
+              style="width: 6em"
+              :selectedKeys="[tableShrink.activeKey]"
+              :items="tableShrink.menuItems"
+              @click="tableShrink.onClick($event.key as TableShrinkType)"
+            ></Menu>
           </template>
-        </Button>
+          <Tooltip title="密度">
+            <Button type="text">
+              <template #icon>
+                <SvgIcon type="shrink"></SvgIcon>
+              </template>
+            </Button>
+          </Tooltip>
+        </Dropdown>
 
-        <Button type="text">
-          <template #icon>
-            <SvgIcon type="gearwheel"></SvgIcon>
-          </template>
-        </Button>
+        <Tooltip title="列设置">
+          <Button type="text">
+            <template #icon>
+              <SvgIcon type="gearwheel"></SvgIcon>
+            </template>
+          </Button>
+        </Tooltip>
       </div>
     </div>
 
-    <Table :columns="columns" :dataSource="dataSource" size="small">
+    <Table
+      :columns="columns"
+      :dataSource="dataSource"
+      :size="tableShrink.activeKey"
+    >
       <template #bodyCell="item">
         <slot name="bodyCell" v-bind="item"></slot>
       </template>
