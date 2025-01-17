@@ -10,11 +10,14 @@ import {
 } from "ant-design-vue";
 import { SvgIcon } from "@/components/svg-icon";
 import { TableShrinkType, useTableShrink } from "./useTableShrink";
+import { usetableSelect } from "./useTableSelect";
 
 defineProps<{
   columns: TableColumnsType;
   dataSource: TableProps["dataSource"];
   title: string;
+  loading: boolean;
+  // selectedRowKeys: (string | number)[];
 }>();
 
 defineEmits<{
@@ -23,6 +26,7 @@ defineEmits<{
 }>();
 
 const tableShrink = useTableShrink();
+const tableSelect = usetableSelect();
 </script>
 
 <template>
@@ -77,9 +81,15 @@ const tableShrink = useTableShrink();
     </div>
 
     <Table
+      rowKey="id"
       :columns="columns"
       :dataSource="dataSource"
       :size="tableShrink.activeKey"
+      :loading="loading"
+      :rowSelection="{
+        selectedRowKeys: tableSelect.selectedKeys,
+        onChange: tableSelect.onSelect,
+      }"
     >
       <template #bodyCell="item">
         <slot name="bodyCell" v-bind="item"></slot>

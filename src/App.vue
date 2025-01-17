@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import {
-  Button,
   Card,
   ConfigProvider,
   Flex,
@@ -18,9 +17,9 @@ locale("zh-cn");
 const columns: TableColumnsType = [
   { title: "规则名称", dataIndex: "ruleName" },
   { title: "描述", dataIndex: "desc" },
-  { title: "服务调用次数", dataIndex: "times" },
+  { title: "服务调用次数", dataIndex: "times", sorter: true },
   { title: "状态", dataIndex: "status" },
-  { title: "上次调度时间", dataIndex: "time" },
+  { title: "上次调度时间", dataIndex: "time", sorter: true },
   { title: "操作", dataIndex: "action" },
 ];
 const dataSource = ref<any[]>([]);
@@ -39,6 +38,7 @@ onMounted(async () => {
       <Card :bordered="false">
         <div style="width: 1200px">
           <CustomeTable
+            :loading="false"
             :columns="columns"
             :dataSource="dataSource"
             title="查询表格"
