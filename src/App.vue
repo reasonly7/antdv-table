@@ -24,7 +24,7 @@ const columns: TableColumnsType = [
   { title: "服务调用次数", dataIndex: "times", sorter: true },
   { title: "状态", dataIndex: "status" },
   { title: "上次调度时间", dataIndex: "time", sorter: true },
-  { title: "操作", dataIndex: "action" },
+  { title: "操作", dataIndex: "action", },
 ];
 const selectedRowKeys = ref<RowKey[]>([]);
 const { query, loading, pagination, records } = usePagination(mockApi.query);
@@ -44,6 +44,7 @@ onMounted(query);
             :dataSource="records"
             :pagination="pagination"
             v-model:selectedRowKeys="selectedRowKeys"
+            @refresh="query"
           >
             <template #bodyCell="{ column }">
               <template v-if="column.dataIndex === 'action'">
@@ -68,7 +69,7 @@ onMounted(query);
   display: flex;
   min-height: 100vh;
   justify-content: center;
-  padding-top: 150px;
+  padding-top: 100px;
   align-items: flex-start;
 }
 </style>

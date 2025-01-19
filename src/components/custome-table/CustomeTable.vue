@@ -1,8 +1,11 @@
 <script lang="ts" setup>
 import {
   Button,
+  Checkbox,
   Dropdown,
+  Flex,
   Menu,
+  Popover,
   Table,
   Tooltip,
   type TableColumnsType,
@@ -56,7 +59,7 @@ const rowSelection = computed(() => {
         </Button>
 
         <Tooltip title="刷新">
-          <Button type="text">
+          <Button type="text" @click="emits('refresh')">
             <template #icon>
               <SvgIcon type="refresh"></SvgIcon>
             </template>
@@ -81,13 +84,27 @@ const rowSelection = computed(() => {
           </Tooltip>
         </Dropdown>
 
-        <Tooltip title="列设置">
-          <Button type="text">
-            <template #icon>
-              <SvgIcon type="gearwheel"></SvgIcon>
-            </template>
-          </Button>
-        </Tooltip>
+        <Popover trigger="click" placement="bottomRight" :arrow="false">
+          <template #title>
+            <Flex justify="space-between" align="center" style="height: 32px">
+              <Checkbox>列展示</Checkbox>
+              <a href="javascript:void(0)" style="font-weight: normal">重置</a>
+            </Flex>
+          </template>
+          <template #content>
+            <ul class="column-setting">
+              
+            </ul>
+          </template>
+
+          <Tooltip title="列设置">
+            <Button type="text">
+              <template #icon>
+                <SvgIcon type="gearwheel"></SvgIcon>
+              </template>
+            </Button>
+          </Tooltip>
+        </Popover>
       </div>
     </div>
 
