@@ -8,7 +8,6 @@ import {
   Popover,
   Table,
   Tooltip,
-  Tree,
   type TableProps,
 } from "ant-design-vue";
 import { SvgIcon } from "@/components/svg-icon";
@@ -16,6 +15,7 @@ import { TableShrinkType, useTableShrink } from "./useTableShrink";
 import { useColumnsSetup, type CustomeTableColumnType, type RowKey } from ".";
 import { computed } from "vue";
 import type { TableRowSelection } from "ant-design-vue/es/table/interface";
+import { ColumnDraggableTree, FixedTreeType } from "./column-draggable-tree";
 
 const props = defineProps<{
   columns: CustomeTableColumnType[];
@@ -95,36 +95,87 @@ const rowSelection = computed(() => {
           <template #title>
             <Flex justify="space-between" align="center" class="header-wrapper">
               <Checkbox>列展示</Checkbox>
-              <a href="javascript:void(0)" class="reset-btn"> 重置 </a>
+              <a
+                href="javascript:void(0)"
+                class="reset-btn"
+                @click="columnsSetup.resetColumns()"
+              >
+                重置
+              </a>
             </Flex>
           </template>
           <template #content>
             <main class="tree-wrapper">
-              <Tree
-                :selectable="false"
-                checkable
-                draggable
-                blockNode
-                showIcon
-                :treeData="columnsSetup.columns"
-                @drop="columnsSetup.onDrop"
+              <ColumnDraggableTree
+                v-if="columnsSetup.leftFixedColumns.length"
+                title="固定在左侧"
+                :fixedType="FixedTreeType.LEFT"
+                :treeData="columnsSetup.leftFixedColumns"
+                v-model:checkedKeys="columnsSetup.leftFixedCheckedKeys"
+                @drop="columnsSetup.onLeftFixedDrop"
+                @fixedRight="
+                  columnsSetup.onClickFixedRight(
+                    $event,
+                    columnsSetup.leftFixedColumns,
+                  )
+                "
+                @unfixed="
+                  columnsSetup.onClickUnfixed(
+                    $event,
+                    columnsSetup.leftFixedColumns,
+                  )
+                "
               >
-                <template #title="item">
-                  <div class="custome-tree-title">
-                    <span class="title">
-                      {{ item.title }}
-                    </span>
-                    <span class="actions" @click.stop>
-                      <a href="javascript:void(0)">
-                        <SvgIcon type="vertical-align-top"></SvgIcon>
-                      </a>
-                      <a href="javascript:void(0)">
-                        <SvgIcon type="vertical-align-bottom"></SvgIcon>
-                      </a>
-                    </span>
-                  </div>
-                </template>
-              </Tree>
+              </ColumnDraggableTree>
+
+              <ColumnDraggableTree
+                v-if="columnsSetup.unfixedColumns.length"
+                :title="
+                  columnsSetup.leftFixedColumns.length ||
+                  columnsSetup.rightFixedColumns.length
+                    ? '不固定'
+                    : ''
+                "
+                :fixedType="FixedTreeType.UNFIXED"
+                :treeData="columnsSetup.unfixedColumns"
+                v-model:checkedKeys="columnsSetup.unfixedCheckedKeys"
+                @drop="columnsSetup.onUnfixedDrop"
+                @fixedLeft="
+                  columnsSetup.onClickFixedLeft(
+                    $event,
+                    columnsSetup.unfixedColumns,
+                  )
+                "
+                @fixedRight="
+                  columnsSetup.onClickFixedRight(
+                    $event,
+                    columnsSetup.unfixedColumns,
+                  )
+                "
+              >
+              </ColumnDraggableTree>
+
+              <ColumnDraggableTree
+                v-if="columnsSetup.rightFixedColumns.length"
+                title="固定在右侧"
+                :fixedType="FixedTreeType.RIGHT"
+                :treeData="columnsSetup.rightFixedColumns"
+                v-model:checkedKeys="columnsSetup.rightFixedCheckedKeys"
+                @drop="columnsSetup.onRightFixedDrop"
+                @fixedLeft="
+                  columnsSetup.onClickFixedLeft(
+                    $event,
+                    columnsSetup.rightFixedColumns,
+                  )
+                "
+                @unfixed="
+                  columnsSetup.onClickUnfixed(
+                    $event,
+                    columnsSetup.rightFixedColumns,
+                  )
+                "
+              >
+              </ColumnDraggableTree>
             </main>
           </template>
 
@@ -141,7 +192,7 @@ const rowSelection = computed(() => {
 
     <Table
       rowKey="id"
-      :columns="columnsSetup.columns"
+      :columns="columns"
       :dataSource="dataSource"
       :size="tableShrink.activeKey"
       :loading="loading"
@@ -179,46 +230,14 @@ const rowSelection = computed(() => {
 <style lang="less">
 .table-columns-setup {
   width: 240px;
+  .ant-popover-inner {
+    padding: 12px 8px;
+  }
   .header-wrapper {
     height: 32px;
+    padding: 0 4px;
     .reset-btn {
       font-weight: normal;
-    }
-  }
-  .tree-wrapper {
-    padding-top: 8px;
-    font-weight: normal;
-    .ant-tree-checkbox {
-      margin-block-start: 0;
-    }
-    .ant-tree-switcher {
-      display: none;
-    }
-    .custome-tree-title {
-      display: flex;
-      align-items: center;
-      .title {
-        flex: 1;
-        width: 0;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        cursor: grab;
-        &:active {
-          cursor: grabbing;
-        }
-      }
-      .actions {
-        align-items: center;
-        gap: 8px;
-        cursor: pointer;
-        display: none;
-      }
-      &:hover {
-        .actions {
-          display: flex;
-        }
-      }
     }
   }
 }

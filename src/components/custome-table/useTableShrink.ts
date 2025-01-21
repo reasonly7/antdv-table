@@ -9,21 +9,20 @@ export const enum TableShrinkType {
 }
 
 export const useTableShrink = () => {
+  const activeKey = ref<TableShrinkType>(TableShrinkType.DEFAULT);
   const menuItems: ItemType[] = [
     { label: "默认", key: TableShrinkType.DEFAULT },
     { label: "中等", key: TableShrinkType.MIDDLE },
     { label: "紧凑", key: TableShrinkType.SMALL },
   ];
 
-  const activeKey = ref<TableShrinkType>(TableShrinkType.DEFAULT);
-
   const onClick = (key: TableShrinkType) => {
     activeKey.value = key;
   };
 
   return toReactive({
-    menuItems,
     activeKey,
     onClick,
+    menuItems,
   });
 };
