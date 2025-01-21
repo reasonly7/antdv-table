@@ -11,6 +11,7 @@ import "dayjs/locale/zh-cn";
 import {
   CustomeTable,
   usePagination,
+  type CustomeTableColumnType,
   type RowKey,
 } from "./components/custome-table";
 import { mockApi } from "./api/mock.api";
@@ -18,13 +19,13 @@ import { onMounted, ref } from "vue";
 
 locale("zh-cn");
 
-const columns: TableColumnsType = [
-  { title: "规则名称", dataIndex: "ruleName" },
-  { title: "描述", dataIndex: "desc" },
-  { title: "服务调用次数", dataIndex: "times", sorter: true },
-  { title: "状态", dataIndex: "status" },
-  { title: "上次调度时间", dataIndex: "time", sorter: true },
-  { title: "操作", dataIndex: "action", },
+const columns: CustomeTableColumnType[] = [
+  { title: "规则名称", dataIndex: "ruleName", key: "ruleName" },
+  { title: "描述", dataIndex: "desc", key: "desc" },
+  { title: "服务调用次数", dataIndex: "times", key: "times", sorter: true },
+  { title: "状态", dataIndex: "status", key: "status" },
+  { title: "上次调度时间", dataIndex: "time", key: "time", sorter: true },
+  { title: "操作", dataIndex: "action", key: "action" },
 ];
 const selectedRowKeys = ref<RowKey[]>([]);
 const { query, loading, pagination, records } = usePagination(mockApi.query);

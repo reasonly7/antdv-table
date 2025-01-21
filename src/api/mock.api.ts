@@ -13,7 +13,6 @@ export const mockApi = {
   query(
     params: { page?: number; size?: number } = { page: 1, size: 10 },
   ): Promise<{ page: number; size: number; total: number; records: any[] }> {
-    console.log(params);
     return new Promise((resolve) => {
       params.page = params.page || 1;
       params.size = params.size || 10;
@@ -29,7 +28,7 @@ export const mockApi = {
               params.page! * params.size!,
             ),
           });
-        }, 2000);
+        }, 1000);
       } else {
         setTimeout(() => {
           resolve({
@@ -38,7 +37,7 @@ export const mockApi = {
             total: records.length,
             records: [],
           });
-        }, 2000);
+        }, 1000);
       }
     });
   },

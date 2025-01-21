@@ -8,17 +8,17 @@ import {
   Popover,
   Table,
   Tooltip,
-  type TableColumnsType,
+  Tree,
   type TableProps,
 } from "ant-design-vue";
 import { SvgIcon } from "@/components/svg-icon";
 import { TableShrinkType, useTableShrink } from "./useTableShrink";
-import type { RowKey } from ".";
+import { useColumnsSetup, type CustomeTableColumnType, type RowKey } from ".";
 import { computed } from "vue";
 import type { TableRowSelection } from "ant-design-vue/es/table/interface";
 
 const props = defineProps<{
-  columns: TableColumnsType;
+  columns: CustomeTableColumnType[];
   dataSource: TableProps["dataSource"];
   title: string;
   loading: boolean;
@@ -33,6 +33,8 @@ const emits = defineEmits<{
 }>();
 
 const tableShrink = useTableShrink();
+const columnsSetup = useColumnsSetup(() => props.columns);
+
 const rowSelection = computed(() => {
   return !props.selectedRowKeys
     ? undefined
@@ -84,17 +86,46 @@ const rowSelection = computed(() => {
           </Tooltip>
         </Dropdown>
 
-        <Popover trigger="click" placement="bottomRight" :arrow="false">
+        <Popover
+          trigger="click"
+          placement="bottomRight"
+          :arrow="false"
+          overlayClassName="table-columns-setup"
+        >
           <template #title>
-            <Flex justify="space-between" align="center" style="height: 32px">
+            <Flex justify="space-between" align="center" class="header-wrapper">
               <Checkbox>列展示</Checkbox>
-              <a href="javascript:void(0)" style="font-weight: normal">重置</a>
+              <a href="javascript:void(0)" class="reset-btn"> 重置 </a>
             </Flex>
           </template>
           <template #content>
-            <ul class="column-setting">
-              
-            </ul>
+            <main class="tree-wrapper">
+              <Tree
+                :selectable="false"
+                checkable
+                draggable
+                blockNode
+                showIcon
+                :treeData="columnsSetup.columns"
+                @drop="columnsSetup.onDrop"
+              >
+                <template #title="item">
+                  <div class="custome-tree-title">
+                    <span class="title">
+                      {{ item.title }}
+                    </span>
+                    <span class="actions" @click.stop>
+                      <a href="javascript:void(0)">
+                        <SvgIcon type="vertical-align-top"></SvgIcon>
+                      </a>
+                      <a href="javascript:void(0)">
+                        <SvgIcon type="vertical-align-bottom"></SvgIcon>
+                      </a>
+                    </span>
+                  </div>
+                </template>
+              </Tree>
+            </main>
           </template>
 
           <Tooltip title="列设置">
@@ -110,7 +141,7 @@ const rowSelection = computed(() => {
 
     <Table
       rowKey="id"
-      :columns="columns"
+      :columns="columnsSetup.columns"
       :dataSource="dataSource"
       :size="tableShrink.activeKey"
       :loading="loading"
@@ -140,6 +171,54 @@ const rowSelection = computed(() => {
       display: flex;
       justify-content: flex-end;
       gap: 4px;
+    }
+  }
+}
+</style>
+
+<style lang="less">
+.table-columns-setup {
+  width: 240px;
+  .header-wrapper {
+    height: 32px;
+    .reset-btn {
+      font-weight: normal;
+    }
+  }
+  .tree-wrapper {
+    padding-top: 8px;
+    font-weight: normal;
+    .ant-tree-checkbox {
+      margin-block-start: 0;
+    }
+    .ant-tree-switcher {
+      display: none;
+    }
+    .custome-tree-title {
+      display: flex;
+      align-items: center;
+      .title {
+        flex: 1;
+        width: 0;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        cursor: grab;
+        &:active {
+          cursor: grabbing;
+        }
+      }
+      .actions {
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        display: none;
+      }
+      &:hover {
+        .actions {
+          display: flex;
+        }
+      }
     }
   }
 }
