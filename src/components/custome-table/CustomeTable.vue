@@ -106,6 +106,15 @@ const rowSelection = computed(() => {
           </template>
           <template #content>
             <main class="tree-wrapper">
+              <div>
+                {{ columnsSetup.leftFixedCheckedKeys }}
+              </div>
+              <div>
+                {{ columnsSetup.unfixedCheckedKeys }}
+              </div>
+              <div>
+                {{ columnsSetup.rightFixedCheckedKeys }}
+              </div>
               <ColumnDraggableTree
                 v-if="columnsSetup.leftFixedColumns.length"
                 title="固定在左侧"

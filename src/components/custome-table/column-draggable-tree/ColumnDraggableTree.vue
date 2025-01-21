@@ -6,8 +6,9 @@ import type { Key } from "ant-design-vue/es/vc-tree/interface";
 import { TooltipIconButton } from "./tooltip-icon-button";
 import { FixedTreeType } from ".";
 import { SvgIcon } from "@/components/svg-icon";
+import { computed } from "vue";
 
-defineProps<{
+const props = defineProps<{
   checkedKeys: Key[];
   treeData: TreeProps["treeData"];
   fixedType: FixedTreeType;
@@ -21,6 +22,10 @@ defineEmits<{
   fixedRight: [key: Key];
   unfixed: [key: Key];
 }>();
+
+const draggable = computed(
+  () => !!(props.treeData?.length && props.treeData.length > 1),
+);
 </script>
 
 <template>
@@ -30,7 +35,7 @@ defineEmits<{
       :selectable="false"
       :checkedKeys="checkedKeys"
       checkable
-      draggable
+      :draggable="draggable"
       blockNode
       showIcon
       :treeData="treeData"
@@ -39,7 +44,7 @@ defineEmits<{
     >
       <template #title="item">
         <div class="custome-tree-title">
-          <span class="title">
+          <span class="title" :class="{ draggable }">
             {{ item.title }}
           </span>
 
@@ -102,9 +107,11 @@ defineEmits<{
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
-        cursor: grab;
-        &:active {
-          cursor: grabbing;
+        &.draggable {
+          cursor: grab;
+          &:active {
+            cursor: grabbing;
+          }
         }
       }
       .actions {

@@ -119,6 +119,30 @@ export const useColumnsSetup = (
     unfixedColumns.value = dropHandler(info, unfixedColumns.value);
   };
 
+  const checkedKeysUpdate = (
+    targetKey: RowKey,
+    targetCheckedKeys: RowKey[],
+  ) => {
+    const index1 = leftFixedCheckedKeys.value.indexOf(targetKey);
+    if (index1 !== -1) {
+      leftFixedCheckedKeys.value.splice(index1, 1);
+    }
+
+    const index2 = unfixedCheckedKeys.value.indexOf(targetKey);
+    if (index2 !== -1) {
+      unfixedCheckedKeys.value.splice(index2, 1);
+    }
+
+    const index3 = rightFixedCheckedKeys.value.indexOf(targetKey);
+    if (index3 !== -1) {
+      rightFixedCheckedKeys.value.splice(index3, 1);
+    }
+
+    if (index1 + index2 + index3 > -3) {
+      targetCheckedKeys.push(targetKey);
+    }
+  };
+
   const fixedChangeHandler = (
     targetKey: RowKey,
     originColumns: CustomeTableColumnType[],
@@ -139,6 +163,7 @@ export const useColumnsSetup = (
     columns: CustomeTableColumnType[],
   ) => {
     fixedChangeHandler(targetKey, columns, leftFixedColumns.value);
+    checkedKeysUpdate(targetKey, leftFixedCheckedKeys.value);
   };
 
   const onClickUnfixed = (
@@ -146,6 +171,7 @@ export const useColumnsSetup = (
     columns: CustomeTableColumnType[],
   ) => {
     fixedChangeHandler(targetKey, columns, unfixedColumns.value);
+    checkedKeysUpdate(targetKey, unfixedCheckedKeys.value);
   };
 
   const onClickFixedRight = (
@@ -153,6 +179,7 @@ export const useColumnsSetup = (
     columns: CustomeTableColumnType[],
   ) => {
     fixedChangeHandler(targetKey, columns, rightFixedColumns.value);
+    checkedKeysUpdate(targetKey, rightFixedCheckedKeys.value);
   };
 
   return toReactive({
