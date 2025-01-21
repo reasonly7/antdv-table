@@ -91,6 +91,51 @@ export const useColumnsSetup = (
   const rightFixedColumns = ref<CustomeTableColumnType[]>([]);
   const unfixedColumns = ref<CustomeTableColumnType[]>([]);
 
+  const isCheckedAll = computed(
+    () =>
+      [
+        ...new Set([
+          ...leftFixedCheckedKeys.value,
+          ...unfixedCheckedKeys.value,
+          ...rightFixedCheckedKeys.value,
+        ]),
+      ].length === fullColumns.value.length,
+  );
+
+  const isIndeterminate = computed(() => {
+    return !!(
+      !isCheckedAll.value &&
+      leftFixedCheckedKeys.value.length +
+        unfixedCheckedKeys.value.length +
+        rightFixedCheckedKeys.value.length
+    );
+  });
+
+  const columns = computed(() => {
+    return [
+      ...leftFixedColumns.value
+        .filter((column) => leftFixedCheckedKeys.value.includes(column.key))
+        .map((column) => {
+          column.fixed = "left";
+          return column;
+        }),
+
+      ...unfixedColumns.value
+        .filter((column) => unfixedCheckedKeys.value.includes(column.key))
+        .map((column) => {
+          column.fixed = false;
+          return column;
+        }),
+
+      ...rightFixedColumns.value
+        .filter((column) => rightFixedCheckedKeys.value.includes(column.key))
+        .map((column) => {
+          column.fixed = "right";
+          return column;
+        }),
+    ];
+  });
+
   const resetColumns = () => {
     leftFixedCheckedKeys.value = [];
     unfixedCheckedKeys.value = fullColumns.value.map((column) => column.key);
@@ -182,7 +227,27 @@ export const useColumnsSetup = (
     checkedKeysUpdate(targetKey, rightFixedCheckedKeys.value);
   };
 
+  const checkedAllToggle = (checked: boolean) => {
+    if (checked) {
+      leftFixedCheckedKeys.value = leftFixedColumns.value.map(
+        (column) => column.key,
+      );
+      unfixedCheckedKeys.value = unfixedColumns.value.map(
+        (column) => column.key,
+      );
+      rightFixedCheckedKeys.value = rightFixedColumns.value.map(
+        (column) => column.key,
+      );
+    } else {
+      leftFixedCheckedKeys.value = [];
+      unfixedCheckedKeys.value = [];
+      rightFixedCheckedKeys.value = [];
+    }
+  };
+
   return toReactive({
+    columns,
+
     leftFixedCheckedKeys,
     unfixedCheckedKeys,
     rightFixedCheckedKeys,
@@ -190,6 +255,10 @@ export const useColumnsSetup = (
     leftFixedColumns,
     rightFixedColumns,
     unfixedColumns,
+
+    isCheckedAll,
+    isIndeterminate,
+    checkedAllToggle,
 
     resetColumns,
 

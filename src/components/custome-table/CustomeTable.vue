@@ -94,7 +94,13 @@ const rowSelection = computed(() => {
         >
           <template #title>
             <Flex justify="space-between" align="center" class="header-wrapper">
-              <Checkbox>列展示</Checkbox>
+              <Checkbox
+                :checked="columnsSetup.isCheckedAll"
+                :indeterminate="columnsSetup.isIndeterminate"
+                @update:checked="columnsSetup.checkedAllToggle"
+              >
+                列展示
+              </Checkbox>
               <a
                 href="javascript:void(0)"
                 class="reset-btn"
@@ -106,15 +112,6 @@ const rowSelection = computed(() => {
           </template>
           <template #content>
             <main class="tree-wrapper">
-              <div>
-                {{ columnsSetup.leftFixedCheckedKeys }}
-              </div>
-              <div>
-                {{ columnsSetup.unfixedCheckedKeys }}
-              </div>
-              <div>
-                {{ columnsSetup.rightFixedCheckedKeys }}
-              </div>
               <ColumnDraggableTree
                 v-if="columnsSetup.leftFixedColumns.length"
                 title="固定在左侧"
@@ -201,7 +198,7 @@ const rowSelection = computed(() => {
 
     <Table
       rowKey="id"
-      :columns="columns"
+      :columns="columnsSetup.columns"
       :dataSource="dataSource"
       :size="tableShrink.activeKey"
       :loading="loading"

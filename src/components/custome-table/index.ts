@@ -11,4 +11,5 @@ export type CustomeTableColumnType = {
   dataIndex: string;
   key: RowKey;
   sorter?: boolean;
+  fixed?: boolean | "left" | "right";
 };
