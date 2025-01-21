@@ -1,10 +1,5 @@
 <script lang="ts" setup>
-import {
-  Card,
-  ConfigProvider,
-  Flex,
-  type TableColumnsType,
-} from "ant-design-vue";
+import { Card, ConfigProvider, Flex } from "ant-design-vue";
 import zhCN from "ant-design-vue/locale/zh_CN";
 import { locale } from "dayjs";
 import "dayjs/locale/zh-cn";
@@ -27,6 +22,7 @@ const columns: CustomeTableColumnType[] = [
   { title: "上次调度时间", dataIndex: "time", key: "time", sorter: true },
   { title: "操作", dataIndex: "action", key: "action" },
 ];
+
 const selectedRowKeys = ref<RowKey[]>([]);
 const { query, loading, pagination, records } = usePagination(mockApi.query);
 
